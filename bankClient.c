@@ -11,9 +11,9 @@ int setupTCPClient(char *servIPAddr, unsigned int portNum) {
 
   /* Setup address of server */
   memset(&servAddr, 0, sizeof(servAddr));
-  servAddr.sin_family = AF_INET;
+  servAddr.sin_family      = AF_INET;
   servAddr.sin_addr.s_addr = inet_addr(servIPAddr);
-  servAddr.sin_port = htons(portNum);
+  servAddr.sin_port        = htons(portNum);
 
   /* Create socket */
   if((clientSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP)) < 0) {
@@ -26,18 +26,13 @@ int setupTCPClient(char *servIPAddr, unsigned int portNum) {
     printf("Failed to connect socket to %s:%d; Error %d: %s\n", servIPAddr, portNum, errno, strerror(errno));
     return -1;
   }
-
   return clientSocket;
 }
 
 int main(int argc, char **argv) {
-  int mySocket;
-  char serverIP[15];
-  char recvBuff[1024];
+  int          mySocket;
+  char         serverIP[15];
   unsigned int portNum;
-  int command, accNum, value;
-  char sendString[100];
-  int n;
 
   if(argc != 6) {
     printf("Usage: bankClient servIPAddr servPortNum command acctNum value\n");
@@ -49,36 +44,55 @@ int main(int argc, char **argv) {
 
   /* Setup TCP port number */
   portNum = atoi(argv[2]);
-
-  /* Setup the command to the server */
-  command = atoi(argv[3]);
-  accNum  = atoi(argv[4]);
-  value   = atoi(argv[5]);
-
+    
   /* Setup client socket */
   if((mySocket = setupTCPClient(serverIP, portNum)) < 0) {
     printf("Could not establish connection to server!\n");
     return -1;
   }
-  accNum = htonl(accNum);
-  value = htonl(value);
 
-  sendString[0] = '\0';
-  int i;
-  for (i=3; i < argc; i++) 
-  {
-    /* Setup the message */
-    sprintf(sendString, "%s %s", sendString, argv[i]);    
+  /* Declaring the data structure we are going to send */
+  sBANK_PROTOCOL s; 
+
+  /* Which command are we using? */
+  switch(argv[3][0]){
+    default:      //No Viable Input
+      printf("Unknown option -%c\n\n", argv[0][0]);
+      s.trans = -1;
+      return -1;
+      break;
+    case 'D':     //Deposit
+      s.trans = 0;
+      break;
+    case 'W':     //Withdrawal
+      s.trans = 1;
+      break;
+    case 'B':     //Balance Inquiry
+      s.trans = 2;
+      break;
   }
-  sprintf(sendString, "%s\n", sendString);
+  s.acctnum = atoi(argv[4]);
+  s.value   = atoi(argv[5]);
 
-  /* Send string to server */
-  send(mySocket, sendString, strlen(sendString), 0);
-  printf("Sent:\n%s\n", sendString);
+  /* Send my struct to server */
+  send(mySocket, &s, sizeof(s), 0);
 
-  /* Receive a string from a server */
-  recv(mySocket, recvBuff, 1023, 0);
-  printf("Received:\n%s\n", recvBuff);
+  /* Receive my processed struct from a server */
+  recv(mySocket, &s, sizeof(s), 0);
+
+  /* Output */ 
+  printf("===========================\n");
+  printf("SENT: \n");                       //What we sent to the server
+  printf("  Transaction: %s\n", argv[3]);
+  printf("  Account Number: %s\n", argv[4]);
+  printf("  Value: %s\n", argv[5] );
+  printf("\n");
+  printf("---------------------------\n");
+  printf("\n");                            //What we are getting from the server
+  printf("RECEIVED: \n");
+  printf("  Account Number: %u\n", s.acctnum);
+  printf("  Balance: %u\n", s.value);
+  printf("===========================\n");
 
   close(mySocket);
 }

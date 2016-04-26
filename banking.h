@@ -14,4 +14,3 @@ typedef struct {
     unsigned int value;		/* value */
 } sBANK_PROTOCOL;
 
-void execCommand();
