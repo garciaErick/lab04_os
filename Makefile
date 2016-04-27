@@ -29,14 +29,14 @@ $(TARGET_SERVER): $(OBJECTS_SERVER)
 
 #Run make run to execute the target(s)
 run_client: $(TARGET_CLIENT)
-	./$(TARGET_CLIENT) 
+	./$(TARGET_CLIENT) 127.0.0.1 1024 theCommand theAccNum theValue
 
 run_server: $(TARGET_SERVER)
-	./$(TARGET_SERVER) 
+	./$(TARGET_SERVER) 1024
 
 #Removing all of the files except the .c's
 clean:
 	-rm -f *.o
 	-rm -f $(TARGET_CLIENT)
-	-rm -f $(TARGET_SERVER)
+	-rm -f $(TARGET_SERVER) 
 

@@ -33,8 +33,10 @@ int setupTCPClient(char *servIPAddr, unsigned int portNum) {
 int main(int argc, char **argv) {
   int mySocket;
   char serverIP[15];
+  char recvBuff[1024];
   unsigned int portNum;
   int command, accNum, value;
+  char sendString[100];
   int n;
 
   if(argc != 6) {
@@ -60,7 +62,23 @@ int main(int argc, char **argv) {
   }
   accNum = htonl(accNum);
   value = htonl(value);
-  
+
+  sendString[0] = '\0';
+  int i;
+  for (i=3; i < argc; i++) 
+  {
+    /* Setup the message */
+    sprintf(sendString, "%s %s", sendString, argv[i]);    
+  }
+  sprintf(sendString, "%s\n", sendString);
+
+  /* Send string to server */
+  send(mySocket, sendString, strlen(sendString), 0);
+  printf("Sent:\n%s\n", sendString);
+
+  /* Receive a string from a server */
+  recv(mySocket, recvBuff, 1023, 0);
+  printf("Received:\n%s\n", recvBuff);
 
   close(mySocket);
 }
