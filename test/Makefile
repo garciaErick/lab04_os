@@ -2,11 +2,11 @@
 # @desc   Makefile for EE4374 Lab04
 
 #All the dependencies for this project
-TARGET_CLIENT  = bankClient   				# executable for the client
-TARGET_SERVER  = bankServer   				# executable for the server
-HEADERS = banking.h               	  # headers with signatures
-OBJECTS_CLIENT = bankClient.o 				# All the object files
-OBJECTS_SERVER = bankServer.o 				# All the object files
+TARGET_CLIENT  = testClient   				# executable for the client
+TARGET_SERVER  = testServer   				# executable for the server
+HEADERS =                	  # headers with signatures
+OBJECTS_CLIENT = testClient.o 				# All the object files
+OBJECTS_SERVER = testServer.o 				# All the object files
 CC      = gcc                         # Compiler
 CFLAGS  = -c 													# Flags
 

@@ -8,8 +8,7 @@
 #define BANK_TRANS_WITHDRAW   1
 #define BANK_TRANS_INQUIRY    2
 
-typedef struct
-{
+typedef struct {
     unsigned int trans;		/* transaction types */
     unsigned int acctnum;	/* account number */
     unsigned int value;		/* value */

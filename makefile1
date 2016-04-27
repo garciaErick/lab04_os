@@ -1,0 +1,34 @@
+# @author Erick Garcia <egarcia87@miners.utep.edu>
+# @desc   Makefile for EE4374 Lab03
+
+#All the dependencies for this project
+TARGET  = egarcia_lab3                   # executable
+HEADERS = egarcia_prime.h                # headers with signatures
+OBJECTS = egarcia_lab3.o egarcia_prime.o # All the object files
+CC      = gcc                            # Compiler
+CFLAGS  = -c 	
+
+#Make all will target the default target which is the executable
+#declared above
+default: all
+
+all: $(TARGET)
+
+#Compiling our executable in this case egarcia_argtok
+$(TARGET): $(OBJECTS)
+		$(CC) $(OBJECTS) -o $@ -pthread
+
+#Compiling all the object files that our executable is dependent on:
+#egarcia_argtok.c and egarcia_lab1.c with the header egarcia_argtok.h
+%.o: %.c $(HEADERS)
+		$(CC) $(CFLAGS) $< -o $@ -pthread
+
+#Run make run to execute the target
+run: $(TARGET)
+		./$(TARGET) 1 5000000
+
+#Removing all of the files except the .c
+clean:
+		-rm -f *.o
+		-rm -f $(TARGET)
+
